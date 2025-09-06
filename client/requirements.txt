@@ -1,0 +1,10 @@
+Django==5.2.6
+django-cors-headers==4.6.0
+mozilla-django-oidc==4.0.1
+djangorestframework==3.16.1
+djangorestframework_simplejwt==5.5.1
+dotenv==0.9.9
+psycopg2-binary==2.9.10
+PyJWT==2.10.1
+python-dotenv==1.1.1
+requests==2.32.5

@@ -1,0 +1,50 @@
+# -----------------
+# Python
+# -----------------
+__pycache__/
+*.py[cod]
+*.pyo
+
+# -----------------
+# Environment
+# -----------------
+*.env
+.env
+*.venv
+.venv
+# -----------------
+# Django
+# -----------------
+db.sqlite3
+media/
+staticfiles/
+
+# -----------------
+# Ignore all migrations except __init__.py
+# -----------------
+**/migrations/*.py
+**/migrations/*.pyc
+!**/migrations/__init__.py
+
+# -----------------
+# Logs
+# -----------------
+*.log
+
+# -----------------
+# Docker
+# -----------------
+*.pid
+docker-compose.override.yml
+
+# -----------------
+# PostgreSQL
+# -----------------
+pg_data/
+
+# -----------------
+# IDE / Editor
+# -----------------
+.vscode/
+.idea/
+*.swp
