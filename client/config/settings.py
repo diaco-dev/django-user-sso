@@ -102,15 +102,20 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
 }
 
 AUTHENTICATION_BACKENDS = (
-    'mozilla_django_oidc.auth.OIDCAuthenticationBackend',
+    # 'mozilla_django_oidc.auth.OIDCAuthenticationBackend',
+    'core.auth.CustomOIDCAuthenticationBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
-OIDC_RP_CLIENT_ID = 'your-client-id'
-OIDC_RP_CLIENT_SECRET = 'your-client-secret'
+AUTH_USER_MODEL = 'core.CustomUser'
+
+OIDC_RP_CLIENT_ID = os.getenv("OIDC_RP_CLIENT_ID", "fallback-secret-key")
+OIDC_RP_CLIENT_SECRET = os.getenv("OIDC_RP_CLIENT_SECRET", "fallback-secret-key")
 OIDC_OP_AUTHORIZATION_ENDPOINT = 'http://localhost:8000/oidc/authorize/'
 OIDC_OP_TOKEN_ENDPOINT = 'http://localhost:8000/oidc/token/'
 OIDC_OP_USER_ENDPOINT = 'http://localhost:8000/oidc/userinfo/'

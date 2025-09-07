@@ -113,7 +113,7 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-AUTH_USER_MODEL = 'accounts.CustomUser'
+AUTH_USER_MODEL = 'account.CustomUser'
 
 LANGUAGE_CODE = 'en-us'
 

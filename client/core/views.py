@@ -14,3 +14,11 @@ class ProtectedAPIView(APIView):
 
 def home(request):
     return render(request, 'home.html')
+
+class ProductListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        products = Product.objects.filter(user=request.user)
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
