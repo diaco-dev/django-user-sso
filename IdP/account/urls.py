@@ -5,7 +5,7 @@ from django.urls import path, include
 from accounts.views import RegisterView, CustomTokenObtainPairView, CustomTokenRefreshView
 
 router = DefaultRouter()
-app_name = 'core'
+app_name = 'accounts'
 
 urlpatterns = [
     path('', include(router.urls)),
