@@ -96,7 +96,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
-
+JWT_SECRET_KEY = 'eWD4qcXcqij7NO9PaoOXTZBf7gbdDysS'
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -104,6 +104,8 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
+    'ALGORITHM': 'HS256',
+    "SIGNING_KEY": JWT_SECRET_KEY,
 }
 
 
@@ -115,6 +117,10 @@ AUTHENTICATION_BACKENDS = [
 
 AUTH_USER_MODEL = 'account.CustomUser'
 
+LOGIN_URL = '/accounts/login/'
+# LOGIN_REDIRECT_URL = '/'
+# LOGOUT_REDIRECT_URL = '/'
+# LOGIN_URL = "/api/token/"
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -126,3 +132,20 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'oidc_provider': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    }
+}
