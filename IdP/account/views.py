@@ -2,7 +2,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.contrib.auth.models import User
-
+from django.shortcuts import render
 from .models import CustomUser
 from .serializers import RegisterSerializer
 
@@ -27,3 +27,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 # Custom Token Refresh View
 class CustomTokenRefreshView(TokenRefreshView):
     pass
+
+
+def login(request):
+    return render(request, 'registration/login.html')
