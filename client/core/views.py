@@ -5,11 +5,8 @@ from django.shortcuts import render
 
 class ProtectedAPIView(APIView):
     permission_classes = [IsAuthenticated]
-
     def get(self, request):
         return Response({"message": f"Hello, {request.user.username}! This is a protected API."})
-
-
 
 
 def home(request):
