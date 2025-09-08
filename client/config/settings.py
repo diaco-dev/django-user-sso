@@ -114,16 +114,17 @@ AUTHENTICATION_BACKENDS = (
 
 AUTH_USER_MODEL = 'core.CustomUser'
 
-OIDC_RP_CLIENT_ID = os.getenv("OIDC_RP_CLIENT_ID", "fallback-secret-key")
-OIDC_RP_CLIENT_SECRET = os.getenv("OIDC_RP_CLIENT_SECRET", "fallback-secret-key")
+OIDC_RP_CLIENT_ID="381324"
+OIDC_RP_CLIENT_SECRET="98787588a8bbc5b4b3464f94a6014e883bec9b0eefce6abeaa776562"
 OIDC_OP_AUTHORIZATION_ENDPOINT = 'http://localhost:8000/oidc/authorize/'
 OIDC_OP_TOKEN_ENDPOINT = 'http://localhost:8000/oidc/token/'
 OIDC_OP_USER_ENDPOINT = 'http://localhost:8000/oidc/userinfo/'
-OIDC_RP_SIGN_ALGO = 'RS256'
+OIDC_RP_SIGN_ALGO = 'HS256'
 OIDC_OP_JWKS_ENDPOINT = 'http://localhost:8000/oidc/jwks/'
-
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+OIDC_RP_SIGNUP = True
+OIDC_CREATE_USER = True
+LOGIN_REDIRECT_URL = '/api/v1/core/home/'
+LOGOUT_REDIRECT_URL = '/api/v1/core/home/'
 
 LANGUAGE_CODE = 'en-us'
 
@@ -136,3 +137,24 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'mozilla_django_oidc': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+        'core.auth': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    }
+}
