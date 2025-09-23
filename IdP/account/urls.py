@@ -1,15 +1,13 @@
-from django.contrib.auth.views import LoginView
-from rest_framework.routers import DefaultRouter
-from django.urls import path, include
-from account.views import RegisterView, CustomTokenObtainPairView, CustomTokenRefreshView, login
-
-router = DefaultRouter()
-app_name = 'accounts'
+from django.urls import path
+from rest_framework_simplejwt.views import TokenRefreshView
+from . import views
+from .views import login_view, UserRegistrationView, user_profile_view, update_profile_view, logout_view
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('register/', RegisterView.as_view(), name='register'),
-    path('token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
-    path('login/', login, name='home'),
+    # Authentication endpoints
+    path('login/', login_view, name='account_login'),
+    path('register/', UserRegistrationView.as_view(), name='account_register'),
+    path('profile/', user_profile_view, name='account_profile'),
+    path('update/', update_profile_view, name='account_update'),
+    path('logout/', logout_view, name='account_logout'),
 ]
