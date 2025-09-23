@@ -21,6 +21,16 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000"]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8000",  # IdP server
+    "http://127.0.0.1:8000",
+]
+
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -30,17 +40,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
-    'mozilla_django_oidc',
     'core',
+    'sso_auth',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'mozilla_django_oidc.middleware.SessionRefresh',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -92,39 +102,45 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# DRF Settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'mozilla_django_oidc.contrib.drf.OIDCAuthentication',
+        'sso_auth.authentication.SSOAuthentication',
     ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
 }
-
+# JWT Settings for internal APIs
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'USER_ID_FIELD': 'id',
-    'USER_ID_CLAIM': 'user_id',
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'UPDATE_LAST_LOGIN': True,
 }
 
-AUTHENTICATION_BACKENDS = (
-    # 'mozilla_django_oidc.auth.OIDCAuthenticationBackend',
-    'core.auth.CustomOIDCAuthenticationBackend',
-    'django.contrib.auth.backends.ModelBackend',
-)
+# SSO Settings for IdP integration
+SSO_SETTINGS = {
+    'IDP_BASE_URL': os.getenv('IDP_BASE_URL', default='http://localhost:8000'),
+    'CLIENT_ID': os.getenv('SSO_CLIENT_ID', default='your-client-id'),
+    'CLIENT_SECRET': os.getenv('SSO_CLIENT_SECRET', default='your-client-secret'),
+    'REDIRECT_URI': os.getenv('SSO_REDIRECT_URI', default='http://localhost:8001/auth/callback/'),
+    'SCOPES': ['read', 'write'],
+}
 
-AUTH_USER_MODEL = 'core.CustomUser'
+# CORS Settings
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
 
-OIDC_RP_CLIENT_ID="381324"
-OIDC_RP_CLIENT_SECRET="98787588a8bbc5b4b3464f94a6014e883bec9b0eefce6abeaa776562"
-OIDC_OP_AUTHORIZATION_ENDPOINT = 'http://localhost:8000/oidc/authorize/'
-OIDC_OP_TOKEN_ENDPOINT = 'http://localhost:8000/oidc/token/'
-OIDC_OP_USER_ENDPOINT = 'http://localhost:8000/oidc/userinfo/'
-OIDC_RP_SIGN_ALGO = 'HS256'
-OIDC_OP_JWKS_ENDPOINT = 'http://localhost:8000/oidc/jwks/'
-OIDC_RP_SIGNUP = True
-OIDC_CREATE_USER = True
-LOGIN_REDIRECT_URL = '/api/v1/core/home/'
-LOGOUT_REDIRECT_URL = '/api/v1/core/home/'
+CORS_ALLOW_CREDENTIALS = True
 
 LANGUAGE_CODE = 'en-us'
 
@@ -139,22 +155,40 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+# Logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'client.log',
+            'formatter': 'verbose',
+        },
         'console': {
+            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
         },
     },
     'loggers': {
-        'mozilla_django_oidc': {
-            'handlers': ['console'],
+        'sso_auth': {
+            'handlers': ['file', 'console'],
             'level': 'DEBUG',
+            'propagate': True,
         },
-        'core.auth': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
+        'api': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
         },
-    }
+    },
 }
+

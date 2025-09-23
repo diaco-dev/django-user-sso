@@ -1,53 +1,148 @@
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+"""
+Core Models for Client App
+مدل‌های اصلی برای اپلیکیشن کلاینت
+"""
 from django.db import models
-from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import User
+from django.utils import timezone
 
-class CustomUserManager(BaseUserManager):
-   def create_user(self, email, username, password=None, **extra_fields):
-       if not email:
-           raise ValueError(_('The Email field must be set'))
-       email = self.normalize_email(email)
-       user = self.model(email=email, username=username, **extra_fields)
-       user.set_password(password)
-       user.save(using=self._db)
-       return user
 
-   def create_superuser(self, email, username, password=None, **extra_fields):
-       extra_fields.setdefault('is_staff', True)
-       extra_fields.setdefault('is_superuser', True)
+class UserProfile(models.Model):
+    """
+    Extended user profile for SSO users
+    پروفایل توسعه یافته برای کاربران SSO
+    """
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='profile'
+    )
+    sso_user_id = models.CharField(
+        'SSO User ID',
+        max_length=255,
+        unique=True,
+        null=True,
+        blank=True
+    )
+    phone = models.CharField(
+        'Phone Number',
+        max_length=15,
+        blank=True
+    )
+    avatar = models.URLField(
+        'Avatar URL',
+        blank=True
+    )
+    bio = models.TextField(
+        'Biography',
+        blank=True
+    )
+    created_at = models.DateTimeField(
+        'Created At',
+        default=timezone.now
+    )
+    updated_at = models.DateTimeField(
+        'Updated At',
+        auto_now=True
+    )
 
-       if extra_fields.get('is_staff') is not True:
-           raise ValueError(_('Superuser must have is_staff=True.'))
-       if extra_fields.get('is_superuser') is not True:
-           raise ValueError(_('Superuser must have is_superuser=True.'))
+    class Meta:
+        verbose_name = 'User Profile'
+        verbose_name_plural = 'User Profiles'
+        db_table = 'user_profiles'
 
-       return self.create_user(email, username, password, **extra_fields)
+    def __str__(self):
+        return f"{self.user.username} Profile"
 
-class CustomUser(AbstractBaseUser, PermissionsMixin):
-   email = models.EmailField(_('email address'), unique=True)
-   username = models.CharField(_('username'), max_length=150, unique=True)
-   phone_number = models.CharField(_('phone number'), max_length=15, blank=True)
-   is_active = models.BooleanField(_('active'), default=True)
-   is_staff = models.BooleanField(_('staff status'), default=False)
 
-   objects = CustomUserManager()
+class Task(models.Model):
+    """
+    Sample model for testing M2M functionality
+    مدل نمونه برای تست عملکرد M2M
+    """
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    ]
 
-   USERNAME_FIELD = 'email'
-   REQUIRED_FIELDS = ['username']
+    title = models.CharField(
+        'Title',
+        max_length=200
+    )
+    description = models.TextField(
+        'Description',
+        blank=True
+    )
+    status = models.CharField(
+        'Status',
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending'
+    )
+    assigned_to = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='assigned_tasks'
+    )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='created_tasks'
+    )
+    created_at = models.DateTimeField(
+        'Created At',
+        default=timezone.now
+    )
+    updated_at = models.DateTimeField(
+        'Updated At',
+        auto_now=True
+    )
+    due_date = models.DateTimeField(
+        'Due Date',
+        null=True,
+        blank=True
+    )
 
-   class Meta:
-       verbose_name = _('user')
-       verbose_name_plural = _('users')
+    class Meta:
+        verbose_name = 'Task'
+        verbose_name_plural = 'Tasks'
+        db_table = 'tasks'
+        ordering = ['-created_at']
 
-   def __str__(self):
-       return self.email
+    def __str__(self):
+        return self.title
 
-class Product(models.Model):
-   user = models.ForeignKey('CustomUser', on_delete=models.CASCADE, related_name='products')
-   name = models.CharField(max_length=100)
-   description = models.TextField(blank=True)
-   price = models.DecimalField(max_digits=10, decimal_places=2)
-   created_at = models.DateTimeField(auto_now_add=True)
 
-   def __str__(self):
-       return self.name
+class Category(models.Model):
+    """
+    Category model for organizing tasks
+    مدل دسته‌بندی برای سازماندهی وظایف
+    """
+    name = models.CharField(
+        'Name',
+        max_length=100,
+        unique=True
+    )
+    description = models.TextField(
+        'Description',
+        blank=True
+    )
+    tasks = models.ManyToManyField(
+        Task,
+        blank=True,
+        related_name='categories'
+    )
+    created_at = models.DateTimeField(
+        'Created At',
+        default=timezone.now
+    )
+
+    class Meta:
+        verbose_name = 'Category'
+        verbose_name_plural = 'Categories'
+        db_table = 'categories'
+
+    def __str__(self):
+        return self.name

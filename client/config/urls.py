@@ -1,13 +1,10 @@
 
-from django.contrib import admin
-from django.urls import path,include
 
-from core.views import home
+from django.contrib import admin
+from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('oidc/', include('mozilla_django_oidc.urls')),
-    path('api/v1/core/', include('core.urls')),
-    path('', home, name='root'),  # مسیر root را به ویوی home هدایت کنید
-
+    path('api/', include('core.urls')),
+    path('auth/', include('sso_auth.urls')),
 ]
