@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  client:
+    build: .
+    ports:
+      - "8001:8001"
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - IDP_AUTHORIZE_URL=http://idp:8000/authorize
+      - IDP_TOKEN_URL=http://idp:8000/token
+      - IDP_USERINFO_URL=http://idp:8000/userinfo
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - REDIRECT_URI=http://localhost:8001/oauth/callback/
+    volumes:
+      - .:/app
