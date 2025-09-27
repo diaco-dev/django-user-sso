@@ -48,3 +48,10 @@ pg_data/
 .vscode/
 .idea/
 *.swp
+
+# -----------------
+# IDE / Editor
+# -----------------
+keys/
+private.pem
+public.pem
