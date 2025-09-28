@@ -68,3 +68,32 @@ class ClientResponse(BaseModel):
     client_secret: str
     client_name: str
     redirect_uris: List[str]
+
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+    client_id: Optional[str] = None
+    scope: Optional[str] = "openid profile email"
+
+class LoginResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+    expires_in: int
+    token_type: str = "Bearer"
+    user: dict
+    scope: str
+
+class AuthorizeRequest(BaseModel):
+    client_id: str
+    redirect_uri: str
+    scope: str = "openid profile email"
+    response_type: str = "code"
+    state: Optional[str] = None
+
+class AuthorizeResponse(BaseModel):
+    client_valid: bool
+    client_name: Optional[str] = None
+    requested_scopes: list
+    state: Optional[str] = None
+    message: str
