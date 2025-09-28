@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     # Database
-    DATABASE_URL: str = "sqlite:///./oauth_idp.db"
+    DATABASE_URL: str
 
     # Security
     SECRET_KEY: str = "your-super-secret-key-change-in-production"
@@ -25,6 +25,9 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3000",
         "http://127.0.0.1:8001",
     ]
+    oauth_client_id: str
+    oauth_client_secret: str
+    oauth_redirect_uri: str
 
     # Environment
     ENVIRONMENT: str = "development"
@@ -32,6 +35,6 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
-
+        extra = "ignore"
 
 settings = Settings()
