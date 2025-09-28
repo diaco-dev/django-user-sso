@@ -13,10 +13,6 @@ from app.database import get_db
 from app.models import OAuth2Client, AuthorizationCode
 from app.schemas import LoginResponse, LoginRequest
 from app.config import settings
-# Assuming these are already defined in your codebase
-# from your_models import AuthorizeRequest, LoginResponse, OAuth2Client, User, AuthorizationCode
-# from your_deps import get_db, authenticate_user, validate_client, generate_tokens, generate_authorization_code
-
 router = APIRouter()
 
 
