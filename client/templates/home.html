@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Client Home</title>
+    <title>Home</title>
 </head>
 <body>
     {% if user.is_authenticated %}
-        <p>Welcome, {{ user.username }}!</p>
-        <a href="{% url 'oidc_logout' %}">Logout</a>
+        <p>Welcome, {{ user.email }}!</p>
+        <a href="/oidc/logout/">Logout</a>
     {% else %}
+        <p>User: {{ user }}, Authenticated: {{ user.is_authenticated }}</p>
         <p>You are not logged in.</p>
-        <a href="{% url 'oidc_authentication_init' %}">Login with SSO</a>
+        <a href="/oidc/authenticate/">Login</a>
     {% endif %}
 </body>
 </html>
