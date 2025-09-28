@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OAuth Login</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 400px; margin: 100px auto; padding: 20px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #007cba; color: white; border: none; cursor: pointer; }
+        button:hover { background: #005a87; }
+        .debug { background: #f0f0f0; padding: 10px; margin: 10px 0; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h2>OAuth Login</h2>
+
+    <!-- Debug info -->
+    <div class="debug">
+        <strong>Debug Info:</strong><br>
+        Client ID: {{ client_id }}<br>
+        Redirect URI: {{ redirect_uri }}<br>
+        Scope: {{ scope }}<br>
+        State: {{ state }}<br>
+    </div>
+
+    <form method="post" action="/login">
+        <!-- Hidden fields to preserve OAuth parameters -->
+        <input type="hidden" name="client_id" value="{{ client_id }}">
+        <input type="hidden" name="redirect_uri" value="{{ redirect_uri }}">
+        <input type="hidden" name="scope" value="{{ scope }}">
+        <input type="hidden" name="state" value="{{ state }}">
+
+        <!-- User credentials -->
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <script>
+        // Debug: Log form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const formData = new FormData(this);
+            console.log('Form submission data:');
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
+        });
+    </script>
+</body>
+</html>
