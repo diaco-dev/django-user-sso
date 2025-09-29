@@ -215,3 +215,41 @@ def generate_tokens(db: Session, client_id: str, user_id: int, scope: str, role:
         "token_type": "Bearer",
         "scope": scope,
     }
+
+def generate_jwt_role(user_id: int, client_id: str, scope: str, role: str, audience: str) -> str:
+    payload = {
+        "sub": str(user_id),
+        "client_id": client_id,
+        "scope": scope,
+        "role": role,
+        "aud": audience,  # <-- اضافه شد
+        "exp": datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
+        "iat": datetime.utcnow(),
+        "iss": "oauth-idp",
+    }
+    return jwt.encode(payload, private_key, algorithm=settings.ALGORITHM)
+
+
+def generate_tokens_role(db: Session, client_id: str, user_id: int, scope: str, role: str, audience: str) -> dict:
+    access_token = generate_jwt_role(user_id, client_id, scope, role, audience)
+    refresh_token = secrets.token_urlsafe(32)
+    expires_at = datetime.utcnow() + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+
+    token = Token(
+        access_token=access_token,
+        refresh_token=refresh_token,
+        client_id=client_id,
+        user_id=user_id,
+        scope=scope,
+        expires_at=expires_at
+    )
+    db.add(token)
+    db.commit()
+
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "expires_in": settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        "token_type": "Bearer",
+        "scope": scope,
+    }
