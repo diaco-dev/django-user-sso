@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 import secrets
 import json
-
+from uuid import UUID
 from .database import get_db, engine
 from .models import Base, User, OAuth2Client, AuthorizationCode, Token
 from .schemas import *
@@ -524,7 +524,7 @@ async def token(
 async def userinfo(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     try:
         payload = jwt.decode(token, public_key, algorithms=[settings.ALGORITHM])
-        user = db.query(User).filter(User.id == int(payload["sub"])).first()
+        user = db.query(User).filter(User.id == UUID(payload["sub"])).first()
         if not user:
             raise HTTPException(status_code=401, detail="Invalid token")
 
