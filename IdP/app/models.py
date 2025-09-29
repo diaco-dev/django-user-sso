@@ -4,7 +4,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from datetime import datetime
 import enum
-
+import uuid
+from sqlalchemy.dialects.postgresql import UUID
 Base = declarative_base()
 
 
@@ -24,7 +25,7 @@ class UserStatus(str, enum.Enum):
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, index=True)
     username = Column(String(50), unique=True, index=True, nullable=False)
     email = Column(String(100), unique=True, index=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
@@ -44,7 +45,7 @@ class User(Base):
 class OAuth2Client(Base):
     __tablename__ = "oauth2_clients"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, index=True)
     client_id = Column(String(100), unique=True, index=True, nullable=False)
     client_secret = Column(String(255), nullable=False)
     client_name = Column(String(100), nullable=False)
@@ -58,10 +59,10 @@ class OAuth2Client(Base):
 class AuthorizationCode(Base):
     __tablename__ = "authorization_codes"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, index=True)
     code = Column(String(255), unique=True, index=True, nullable=False)
     client_id = Column(String(100), ForeignKey("oauth2_clients.client_id"), nullable=False)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     scope = Column(String(255), nullable=False)
     expires_at = Column(DateTime, nullable=False)
     used = Column(Boolean, default=False)
@@ -75,15 +76,15 @@ class AuthorizationCode(Base):
 class Token(Base):
     __tablename__ = "tokens"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, index=True)
     access_token = Column(Text, nullable=False)
     refresh_token = Column(String(255), unique=True, index=True)
-    client_id = Column(String(100), ForeignKey("oauth2_clients.client_id"), nullable=False)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    client_id = Column(String(255), ForeignKey("oauth2_clients.client_id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     scope = Column(String(255), nullable=False)
     expires_at = Column(DateTime, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
-
+    audience = Column(String(100))
     # Relationships
     user = relationship("User", back_populates="tokens")
     client = relationship("OAuth2Client")
