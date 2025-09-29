@@ -3,6 +3,7 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional, List
 from enum import Enum
+from uuid import UUID
 
 class UserRoleSchema(str, Enum):
     ADMIN = "admin"
@@ -24,7 +25,7 @@ class UserRegister(BaseModel):
     role: Optional[UserRoleSchema] = UserRoleSchema.USER
 
 class UserResponse(BaseModel):
-    id: int
+    id: UUID
     username: str
     email: str
     first_name: Optional[str]
@@ -75,6 +76,7 @@ class LoginRequest(BaseModel):
     password: str
     client_id: Optional[str] = None
     scope: Optional[str] = "openid profile email"
+    state: Optional[str] = None
 
 class LoginResponse(BaseModel):
     access_token: str
