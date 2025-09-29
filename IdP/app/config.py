@@ -29,6 +29,12 @@ class Settings(BaseSettings):
     oauth_client_secret: str
     oauth_redirect_uri: str
 
+    # Role redirects
+    ROLE_REDIRECTS: dict = {
+        "admin": "http://localhost:3000/admin-dashboard",
+        "staff": "http://localhost:3000/staff-dashboard",
+        "user": "http://localhost:3000/user-dashboard",
+    }
     # Environment
     ENVIRONMENT: str = "development"
     DEBUG: bool = True
