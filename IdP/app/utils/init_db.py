@@ -1,8 +1,7 @@
 # init_db.py - Database initialization script
-from sqlalchemy.orm import Session
-from .database import SessionLocal, engine
-from .models import Base, User, OAuth2Client
-from .auth import hash_password
+from app.core.database import SessionLocal, engine
+from app.models import Base, User, OAuth2Client
+from app.core.authentication import hash_password
 import json
 
 
