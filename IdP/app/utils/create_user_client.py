@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.database import get_db, Base, engine
+from app.core.database import get_db, Base, engine
 from app.models import User, OAuth2Client
 
 
