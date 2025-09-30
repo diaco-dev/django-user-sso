@@ -134,15 +134,3 @@ class TaskViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         except User.DoesNotExist:
             return Response({'error': 'Invalid user'}, status=status.HTTP_400_BAD_REQUEST)
-
-    # @action(detail=True, methods=['post'])
-    # def update_status(self, request, pk=None):
-    #     """Update task status"""
-    #     task = self.get_object()
-    #     new_status = request.data.get('status')
-    #
-    #     if new_status not in dict(Task.STATUS_CHOICES):
-    #         return Response({'error': 'Invalid status'}, status=status.HTTP_400_BAD_REQUEST)
-    #
-    #     task.status = new_status
-    #     task
