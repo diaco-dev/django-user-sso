@@ -75,17 +75,16 @@
 #     }
 
 #////////////////////////////////////////////////////////
-# auth.py - Authentication utilities
+# authentication.py - Authentication utilities
 import jwt
 import secrets
-import hashlib
 from datetime import datetime, timedelta
 from pathlib import Path
 from cryptography.hazmat.primitives import serialization
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from .config import settings
-from .models import User, OAuth2Client, AuthorizationCode, Token
+from app.core.config import settings
+from app.models import User, OAuth2Client, AuthorizationCode, Token
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -93,7 +92,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Load RSA keys
 def load_keys():
-    keys_dir = Path("keys")
+    keys_dir = Path("../keys")
     keys_dir.mkdir(exist_ok=True)
 
     private_key_path = Path(settings.PRIVATE_KEY_PATH)
@@ -102,7 +101,6 @@ def load_keys():
     # Generate keys if they don't exist
     if not private_key_path.exists() or not public_key_path.exists():
         from cryptography.hazmat.primitives.asymmetric import rsa
-        from cryptography.hazmat.primitives import hashes
 
         private_key = rsa.generate_private_key(
             public_exponent=65537,
