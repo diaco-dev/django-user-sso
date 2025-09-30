@@ -23,7 +23,7 @@ app = FastAPI(
     description="Production-ready OAuth 2.0 Identity Provider with Role-based Access Control",
     version="1.0.0"
 )
-from app.integrated_login import router as auth_router  # وارد کردن router از فایل دیگر
+from app.integrated_login import router as auth_router
 app.include_router(auth_router)
 # CORS
 app.add_middleware(
