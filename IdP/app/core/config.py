@@ -15,8 +15,8 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 30
 
     # Keys
-    PRIVATE_KEY_PATH: str = "keys/private.pem"
-    PUBLIC_KEY_PATH: str = "keys/public.pem"
+    PRIVATE_KEY_PATH: str = "../keys/private.pem"
+    PUBLIC_KEY_PATH: str = "../keys/public.pem"
 
     # CORS
     ALLOWED_ORIGINS: list = [
