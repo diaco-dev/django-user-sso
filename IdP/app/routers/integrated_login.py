@@ -1,6 +1,4 @@
-import os
-
-from fastapi import APIRouter, Depends, HTTPException, Form
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
@@ -8,11 +6,11 @@ from sqlalchemy.orm import Session
 import json
 import secrets
 
-from app.auth import validate_client, authenticate_user, generate_authorization_code, generate_tokens, generate_tokens_role
-from app.database import get_db
+from app.core.authentication import authenticate_user, generate_authorization_code, generate_tokens, generate_tokens_role
+from app.core.database import get_db
 from app.models import OAuth2Client, AuthorizationCode
 from app.schemas import LoginResponse, LoginRequest
-from app.config import settings
+from app.core.config import settings
 router = APIRouter()
 
 
