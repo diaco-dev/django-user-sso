@@ -1,19 +1,14 @@
 # main.py - FastAPI application
-from fastapi import FastAPI, Depends, HTTPException, Form, Request, status
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi import FastAPI, Depends, HTTPException, Form, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session
-from datetime import datetime
-import secrets
 import json
-from uuid import UUID
-from .database import get_db, engine
-from .models import Base, User, OAuth2Client, AuthorizationCode, Token
+from app.core.database import get_db, engine
+from .models import Base
 from .schemas import *
-from .auth import *
-from .config import settings
+from app.core.authentication import *
+from app.core.config import settings
 
 # Create tables
 Base.metadata.create_all(bind=engine)
@@ -23,7 +18,7 @@ app = FastAPI(
     description="Production-ready OAuth 2.0 Identity Provider with Role-based Access Control",
     version="1.0.0"
 )
-from app.integrated_login import router as auth_router
+from app.routers.integrated_login import router as auth_router
 app.include_router(auth_router)
 # CORS
 app.add_middleware(
